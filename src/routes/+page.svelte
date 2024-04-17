@@ -1,20 +1,5 @@
 <script lang="ts">
-    interface Collideable {
-        x: number;
-        y: number;
-        velX: number;
-        velY: number;
-        size: number;
-
-        doesCollide: (object: Collideable) => boolean;
-    }
-
-    interface Drawable {
-        cssColor: string;
-        isFilled: boolean;
-    }
-
-    type GameObject = Collideable & Drawable & {isEvil: boolean};
+    import type { Collideable, Drawable, GameObject } from "$lib/types";
     
     function randomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
