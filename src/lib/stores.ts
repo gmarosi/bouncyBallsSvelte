@@ -10,3 +10,5 @@ function createObjectStore() {
         empty: () => set([]),
     }
 }
+
+export const gameObjects = createObjectStore();
