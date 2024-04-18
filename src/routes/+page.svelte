@@ -16,6 +16,18 @@
             }
         }
     }
+
+    class EvilCircle extends GameObject {
+        constructor(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean) {
+            super(x, y, velX, velY, size, cssColor, isFilled);
+        }
+
+        onCollide(object: Collideable): void {
+            if (object instanceof GameObject && $gameObjects.includes(object)) {
+                gameObjects.remove(object);
+            }
+        }
+    }
     
     function randomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -59,12 +71,6 @@
 
         object.x += object.velX;
         object.y += object.velY;
-    }
-
-    function evilOnCollide(self: Collideable, object: Collideable) {
-        if (object instanceof GameObject && $gameObjects.includes(object)) {
-            gameObjects.remove(object);
-        }
     }
 
     function loop(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
