@@ -7,6 +7,7 @@ function createObjectStore() {
     return {
         subscribe,
         add: (object: GameObject) => update((array) => [...array, object]),
+        remove: (object: GameObject) => update((array) => array.filter((element) => element !== object)),
         empty: () => set([]),
     }
 }

@@ -55,6 +55,12 @@
         }
     }
 
+    function evilOnCollide(self: Collideable, object: Collideable) {
+        if (object instanceof GameObject && $gameObjects.includes(object)) {
+            gameObjects.remove(object);
+        }
+    }
+
     function loop(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
         context.fillStyle = 'rgba(0, 0, 0, 0.25)';
         context.fillRect(0, 0, canvas.width, canvas.height);
