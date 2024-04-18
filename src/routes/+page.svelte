@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { GameObject, type Collideable, type Drawable } from "$lib/types";
+    import { GameObject, type Collideable, type Direction } from "$lib/types";
     import { onMount } from "svelte";
     import { gameObjects } from "$lib/stores";
 
@@ -27,6 +27,23 @@
                 gameObjects.remove(object);
             }
         }
+
+        move(direction: Direction, canvas: HTMLCanvasElement) {
+            switch (direction) {
+                case "Left":
+                    this.x = this.x - this.size - this.velX < 0 ? this.size : this.x - this.velX;
+                    break;
+                case "Right":
+                    this.x = this.x + this.size + this.velX > canvas.width ? canvas.width - this.size : this.x + this.velX;
+                    break;
+                case "Up":
+                    this.y = this.y - this.size - this.velY < 0 ? this.size : this.y - this.velY;
+                    break;
+                case "Down":
+                    this.y = this.y + this.size + this.velY > canvas.height ? canvas.height - this.size : this.y + this.velY;
+                    break;
+            }
+        }
     }
     
     function randomInt(min: number, max: number): number {
@@ -52,7 +69,7 @@
         }
     }
 
-    function updateGameObjectPosition(object: GameObject, canvas: HTMLCanvasElement) {
+    function updateBallPosition(object: Ball, canvas: HTMLCanvasElement) {
         if ((object.x + object.size) >= canvas.width) {
             object.velX = -(Math.abs(object.velX));
         }
@@ -78,7 +95,9 @@
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let object of $gameObjects) {
-            updateGameObjectPosition(object, canvas);
+            if (object instanceof Ball) {
+                updateBallPosition(object, canvas);
+            }
 
             for (let other of $gameObjects) {
                 if (other === object) {
@@ -116,6 +135,9 @@
             gameObjects.add(new Ball(x, y, velX, velY, size, randomCSSRGB(), true));
         }
 
+        gameObjects.add(new EvilCircle(randomInt(15, canvas.width - 15), randomInt(15, canvas.height - 15),
+                                        20, 20, 15, "white", false));
+
         if (context instanceof CanvasRenderingContext2D) {
             for (let object of $gameObjects) {
                 draw(object, context);
@@ -124,6 +146,30 @@
             loop(canvas, context);
         }
     });
+
+    function keydownHandler(event: KeyboardEvent) {
+        debugger;
+        const evils = $gameObjects.filter((element) => element instanceof EvilCircle);
+
+        switch (event.code) {
+                case "ArrowLeft":
+                case "KeyA":
+                    evils.forEach((element) => (<EvilCircle>element).move("Left", canvas));
+                    break;
+                case "ArrowRight":
+                case "KeyD":
+                    evils.forEach((element) => (<EvilCircle>element).move("Right", canvas));
+                    break;
+                case "ArrowUp":
+                case "KeyW":
+                    evils.forEach((element) => (<EvilCircle>element).move("Up", canvas));
+                    break;
+                case "ArrowDown":
+                case "KeyS":
+                    evils.forEach((element) => (<EvilCircle>element).move("Down", canvas));
+                    break;
+            }
+    }
 </script>
 
 <style>
@@ -133,4 +179,5 @@
     }
 </style>
 
+<svelte:window on:keydown={keydownHandler}></svelte:window>
 <canvas bind:this={canvas}></canvas>

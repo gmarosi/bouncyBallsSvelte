@@ -42,3 +42,5 @@ export class GameObject implements Collideable, Drawable {
 
     onCollide(object: Collideable) {}
 }
+
+export type Direction = "Up" | "Down" | "Left" | "Right";
