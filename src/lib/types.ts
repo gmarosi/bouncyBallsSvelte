@@ -6,7 +6,7 @@ export interface Collideable {
     size: number;
 
     doesCollide: (object: Collideable) => boolean;
-    onCollide: (self: Collideable, object: Collideable) => void;
+    onCollide: (object: Collideable) => void;
 }
 
 export interface Drawable {
@@ -24,7 +24,7 @@ export class GameObject implements Collideable, Drawable {
     cssColor: string;
     isFilled: boolean;
 
-    constructor(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean, onCollide: (self: Collideable, object: Collideable) => void) {
+    constructor(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean) {
         this.x = x;
         this.y = y;
         this.velX = velX;
@@ -32,7 +32,6 @@ export class GameObject implements Collideable, Drawable {
         this.size = size;
         this.cssColor = cssColor;
         this.isFilled = isFilled;
-        this.onCollide = onCollide;
     }
 
     doesCollide(object: Collideable) {
@@ -41,5 +40,5 @@ export class GameObject implements Collideable, Drawable {
         return Math.sqrt(dx * dx + dy * dy) <= this.size + object.size;
     }
 
-    onCollide: (self: Collideable, object: Collideable) => void;
+    onCollide(object: Collideable) {}
 }

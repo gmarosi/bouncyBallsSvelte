@@ -2,6 +2,20 @@
     import { GameObject, type Collideable, type Drawable } from "$lib/types";
     import { onMount } from "svelte";
     import { gameObjects } from "$lib/stores";
+
+    class Ball extends GameObject {
+        constructor(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean) {
+            super(x, y, velX, velY, size, cssColor, isFilled);
+        }
+
+        onCollide(object: Collideable): void {
+            const newColor: string = randomCSSRGB();
+            if (object instanceof Ball) {
+                this.cssColor = newColor;
+                object.cssColor = newColor;
+            }
+        }
+    }
     
     function randomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -47,14 +61,6 @@
         object.y += object.velY;
     }
 
-    function ballOnCollide(self: Collideable, object: Collideable) {
-        const newColor: string = randomCSSRGB();
-        if (self instanceof GameObject && object instanceof GameObject) {
-            self.cssColor = newColor;
-            object.cssColor = newColor;
-        }
-    }
-
     function evilOnCollide(self: Collideable, object: Collideable) {
         if (object instanceof GameObject && $gameObjects.includes(object)) {
             gameObjects.remove(object);
@@ -74,7 +80,7 @@
                 }
 
                 if (object.doesCollide(other)) {
-                    object.onCollide(object, other);
+                    object.onCollide(other);
                 }
             }
 
@@ -101,7 +107,7 @@
             const y: number = randomInt(size, canvas.height - size);
             const velX: number = randomInt(-7, 7);
             const velY: number = randomInt(-7, 7);
-            gameObjects.add(new GameObject(x, y, velX, velY, size, randomCSSRGB(), true, ballOnCollide));
+            gameObjects.add(new Ball(x, y, velX, velY, size, randomCSSRGB(), true));
         }
 
         if (context instanceof CanvasRenderingContext2D) {
