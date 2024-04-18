@@ -1,8 +1,7 @@
 <script lang="ts">
-    import type { Collideable, Drawable, GameObject } from "$lib/types";
+    import { GameObject, type Collideable, type Drawable } from "$lib/types";
     import { onMount } from "svelte";
     import { gameObjects } from "$lib/stores";
-    import { page } from "$app/stores";
     
     function randomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -10,22 +9,6 @@
 
     function randomCSSRGB() {
         return `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
-    }
-
-    function GameObjectFactory(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean, isEvil: boolean): GameObject {
-        return {
-            x,
-            y,
-            velX,
-            velY,
-            size,
-            cssColor,
-            isFilled,
-            isEvil,
-            doesCollide: (object: Collideable) => {
-                return Math.sqrt((x - object.x) ** 2 + (y - object.y) ** 2) <= size + object.size;
-            },
-        };
     }
 
     function draw(object: GameObject, context: CanvasRenderingContext2D) {
@@ -64,20 +47,33 @@
         object.y += object.velY;
     }
 
+    function ballOnCollide(self: Collideable, object: Collideable) {
+        const newColor: string = randomCSSRGB();
+        if (self instanceof GameObject && object instanceof GameObject) {
+            self.cssColor = newColor;
+            object.cssColor = newColor;
+        }
+    }
+
     function loop(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
         context.fillStyle = 'rgba(0, 0, 0, 0.25)';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let object of $gameObjects) {
             updateGameObjectPosition(object, canvas);
+
+            for (let other of $gameObjects) {
+                if (other === object) {
+                    continue;
+                }
+
+                if (object.doesCollide(other)) {
+                    object.onCollide(object, other);
+                }
+            }
+
             draw(object, context);
         }
-
-        // const isOver = game.update();
-        // counter.textContent = `Ball count: ${game.ballCount}`;
-        // if(isOver) {
-        //     return;
-        // }
 
         function callBack() {
             loop(canvas, context);
@@ -99,7 +95,7 @@
             const y: number = randomInt(size, canvas.height - size);
             const velX: number = randomInt(-7, 7);
             const velY: number = randomInt(-7, 7);
-            gameObjects.add(GameObjectFactory(x, y, velX, velY, size, randomCSSRGB(), true, false));
+            gameObjects.add(new GameObject(x, y, velX, velY, size, randomCSSRGB(), true, ballOnCollide));
         }
 
         if (context instanceof CanvasRenderingContext2D) {
