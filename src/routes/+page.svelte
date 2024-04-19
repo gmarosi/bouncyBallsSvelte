@@ -174,6 +174,8 @@
 
 <style>
     :global(body) {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
         overflow: hidden;
         margin: 0;
     }
@@ -182,7 +184,31 @@
         max-width: 100%;
         max-height: 100%;
     }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: -1px;
+      position: absolute;
+      margin: 0;
+      top: -4px;
+      right: 5px;
+
+      color: transparent;
+      text-shadow: 0 0 4px white;
+    }
+
+    p {
+        display: block;
+        position: absolute;
+        margin: 0;
+        top: 35px;
+        right: 5px;
+        color: #aaa;
+    }
 </style>
 
 <svelte:window on:keydown={keydownHandler}></svelte:window>
+
+<h1>bouncing balls</h1>
+<p>Ball count: {$gameObjects.filter((element) => element instanceof Ball).length}</p>
 <canvas bind:this={canvas}></canvas>
