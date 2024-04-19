@@ -1,4 +1,12 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+
+    function restartGame() {
+        dispatch("restart");
+    }
+
     export let playing: boolean;
 </script>
 
@@ -14,5 +22,5 @@
 </style>
 
 <form>
-    <button style="display: {playing ? "none" : "block"}">Restart game</button>
+    <button on:click={restartGame} style="display: {playing ? "none" : "block"}">Restart game</button>
 </form>

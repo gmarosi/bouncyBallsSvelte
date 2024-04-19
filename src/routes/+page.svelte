@@ -137,6 +137,7 @@
     }
 
     let canvas: HTMLCanvasElement;
+    $: playing = $gameObjects.filter((element) => element instanceof Ball).length > 0;
 
     onMount(() => {
         canvas.width = window.innerWidth;
@@ -153,7 +154,6 @@
             loop(canvas, context);
         }
     });
-    $: playing = $gameObjects.filter((element) => element instanceof Ball).length > 0;
 
     function keydownHandler(event: KeyboardEvent) {
         debugger;
@@ -217,7 +217,7 @@
 
 <svelte:window on:keydown={keydownHandler}></svelte:window>
 
-<Menu {playing}/>
+<Menu {playing} on:restart={() => startGame(canvas, 25)}/>
 <h1>bouncing balls</h1>
 <p>Ball count: {$gameObjects.filter((element) => element instanceof Ball).length}</p>
 <canvas bind:this={canvas} style="display: {playing ? "block" : "none"}"></canvas>
