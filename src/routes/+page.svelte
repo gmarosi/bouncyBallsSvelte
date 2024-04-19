@@ -173,6 +173,11 @@
 </script>
 
 <style>
+    :global(body) {
+        overflow: hidden;
+        margin: 0;
+    }
+
     canvas {
         max-width: 100%;
         max-height: 100%;
