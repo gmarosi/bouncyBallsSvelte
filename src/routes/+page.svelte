@@ -2,6 +2,7 @@
     import { GameObject, type Collideable, type Direction } from "$lib/types";
     import { onMount } from "svelte";
     import { gameObjects } from "$lib/stores";
+    import Menu from "./Menu.svelte";   
 
     class Ball extends GameObject {
         constructor(x: number, y: number, velX: number, velY: number, size: number, cssColor: string, isFilled: boolean) {
@@ -146,6 +147,7 @@
             loop(canvas, context);
         }
     });
+    $: playing = $gameObjects.filter((element) => element instanceof Ball).length > 0;
 
     function keydownHandler(event: KeyboardEvent) {
         debugger;
@@ -209,6 +211,7 @@
 
 <svelte:window on:keydown={keydownHandler}></svelte:window>
 
+<Menu {playing}/>
 <h1>bouncing balls</h1>
 <p>Ball count: {$gameObjects.filter((element) => element instanceof Ball).length}</p>
-<canvas bind:this={canvas}></canvas>
+<canvas bind:this={canvas} style="display: {playing ? "block" : "none"}"></canvas>
