@@ -120,14 +120,10 @@
         requestAnimationFrame(callBack);
     }
 
-    let canvas: HTMLCanvasElement;
-
-    onMount(() => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const context = canvas.getContext("2d");
-
-        for (let i: number = 0; i < 20; i++) {
+    function startGame(canvas: HTMLCanvasElement, ballNumber: number) {
+        gameObjects.empty();
+        
+        for (let i: number = 0; i < ballNumber; i++) {
             const size: number = randomInt(10, 20);
             const x: number = randomInt(size, canvas.width - size);
             const y: number = randomInt(size, canvas.height - size);
@@ -138,6 +134,16 @@
 
         gameObjects.add(new EvilCircle(randomInt(15, canvas.width - 15), randomInt(15, canvas.height - 15),
                                         20, 20, 15, "white", false));
+    }
+
+    let canvas: HTMLCanvasElement;
+
+    onMount(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const context = canvas.getContext("2d");
+
+        startGame(canvas, 25);
 
         if (context instanceof CanvasRenderingContext2D) {
             for (let object of $gameObjects) {
